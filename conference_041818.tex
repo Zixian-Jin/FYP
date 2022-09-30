@@ -1,0 +1,83 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\begin{document}
+
+\title{Indoor Radio Map Construction with Radio-Propagation-Theory-Aided Deep Learning\\
+
+
+}
+
+\author{\IEEEauthorblockN{Zixian Jin}
+\IEEEauthorblockA{\textit{School of Science of Engineering} \\
+\textit{The Chinese University of Hong Kong, Shenzhen}\\
+Shenzhen, China \\
+119010134@link.cuhk.edu.cn}
+}
+
+\maketitle
+
+
+
+\section{Introduction}
+Radio map provides power spectrum at any point in an area of interest. Thus, it plays an important role in wireless communication applications, such as mobile phone localization and UAV communication \cite{b1}\cite{b2}. A typical radio map is constructed by several sensors that is distributed in the area. These sensors collect the radio frequency (RF) signal measurements, which are further used to predict the received signal strength (RSS) at every point of the radio map. However, such a map is hard to acquire for two main reasons. Firstly, the sensors that collect the signal information is usually sparsely distributed among the studied area, hence providing limited information about the radio environment. In addition, in practical occasions radio wave does not always propagate smoothly – buildings and cars make the geography of the studied area complex and brings about signal reflection and scattering \cite{b3}. 
+
+
+
+\section{Literature Reiview}
+Numerous works, including traditional model-based methods and recent model-free methods have emerged to try to obtain a predicted radio map that is as close to the real radio environment as possible. In this section, I will classify them as three group and discuss the pros and cons of each category.
+\subsection{Spectrum Cartography as a Tensor Completion Task}
+These methods treat radio map as a three-dimensional tensor, with each element represents the power of a specific frequency at a specific location in the area of interest. Only the value of those elements where sensors are deployed are previously known. Hence, the radio spectrum construction is solved by completing other vacant elements based on the already known entries. Different techniques have been proposed for this task, such as Kriging interpolation \cite{b4}, matrix completion \cite{b5}, tensor completion \cite{b6}, and radial basis functions (RBF) \cite{b7} . These methods are based on a common assumption that the signal propagates smoothly and the sensors are sparsely deployed, making the tensor completion task feasible \cite{b6}\cite{b8}. 
+
+
+\subsection{Model-Free Deep learning Methods}
+Different from the aforementioned conventional techniques, \cite{b9} proposed deep neural network (DNN) to construct radio maps. DNN serves as a implicit map estimator that takes the RSS measurements as input and outputs predicted radio map. By training the network with dataset, the output converges to the real radio map. However, the principle of this method is purely based on deep learning and disregards signal propagation models. Thus, the DNN used contains a tremendous number of parameters, which takes a high computation and time cost. 
+
+\subsection{Model-Based Deep Learning Methods}
+To tackle the problem that pure deep learning is computationally challenging,  \cite{b10} improves the DNN-based SC efficiency by disaggregating the radio map measurements into several sub-map, with each one contains a single signal emitter. Based on theory that the RSS at any point is the linear combination of the RSS values caused by each individual emitter, the DNN predicts the signal propagation function (SLF) of each signal emitter, and then generates the estimated radio map by superimposed these SLFs. Under this assumption, the DNN only needs to be trained to be a single-SLF estimator, which greatly reduces the computational cost. Motivated by the principle of physical simulation, \cite{b3} proposed RadioUNet, which trains the DNN as a signal propagation simulator by taking as input geometry of the studied area and locations of signal emitters. However, on many occasions these measurements are much harder to acquire than sensor measurements. Moreover, apart from geometric attributes, other physical properties of the buildings in the area, such as color and material also affect signal reflection and scattering. Thus, it is not reliable to generate radio map solely depending on geometry.  
+
+\section{Proposed Research}
+In order to make the most of advantages bring by each methods, in this research I plan to build a hybrid model, which takes into consideration maps generated both by conventional interpolation methods and DNN-based data-fitting method.
+
+Approximate the area of interest as $\mathbb{D}$, and discretize it as a $\Omega$ = $N_y$ * $N_x$ grid. Thus the true radio map is approximated as $\Psi(x_n, f)$, $x_n \in \Omega$, and the estimated radio map is $\Psi'(x_n, f)$, $x_n \in \Omega$.
+
+Hence, the aim of proposed radio map generator is to produce a map estimate such that the mean squared error between  $\Psi(x, f)$ and $\Psi'(x, f)$ is minimized.
+
+The proposed radio map estimator comprises of two branches. The output of the first branch is a radio map $\Psi'_1$ generated by conventional interpolation methods. The second branch constructs a radio map $\Psi'_2$ generated by the autoencoder of \cite{b9}. Then the two maps are combined together to generate the final radio maps $\Psi'$. The crucial question remains in what method to implement the combination. Motivated the idea of physics-informed machine learning \cite{b11}, the first branch, which is treated as prior knowledge, will work as a constraint for the second DNN-based branch.
+
+
+
+
+
+
+
+
+
+
+\begin{thebibliography}{00}
+\bibitem{b1} S. Zhang and R. Zhang. "Radio map based 3d path planning for cellular-connected UAV", in Proc. IEEE Global Commun. Conf., Waikoload, HI, Dec. 2019
+\bibitem{b2} J. chen and D. Gesbert, "optimal positioning of flying relays for wireless networks: A LOS map approach", in Proc. IEEE Int Conf. Commun., Paris, France, May 2017, pp. 1-8.
+\bibitem{b3} Levie, R., Yapar, C., Kutyniok, G. and Caire, G., 2021. "RadioUNet: Fast Radio Map Estimation With Convolutional Neural Networks“. IEEE Transactions on Wireless Communications, 20(6), pp.4001-4015.
+\bibitem{b4} G. Boccolini, G. Hernandez-Penaloza, and B. Beferull-Lozano, “Wireless sensor network for spectrum cartography based on kriging interpolation,” in Proc. IEEE Int. Symp. PIMRC, 2012, pp. 1565–1570.
+\bibitem{b5} S. Chouvardas, S. Valentin, M. Draief, and M. Leconte, “A method to reconstruct coverage loss maps based on matrix completion and adaptive sampling,” in Proc. IEEE Int. Conf. Acoust., Speech Signal Process.
+(ICASSP), Shanghai, China, Mar. 2016, pp. 6390–6394.
+\bibitem{b6} D. Schaufele, R. L. G. Cavalcante, and S. Stanczak, “Tensor completion for radio map reconstruction using low rank and smoothness,” in
+Proc. IEEE 20th Int. Workshop Signal Process. Adv. Wireless Commun.(SPAWC), Cannes, France, Jul. 2019, pp. 1–5.
+\bibitem{b7} . Hamid and B. Beferull-Lozano, “Non-parametric spectrum cartography using adaptive radial basis functions,” in Proc. IEEE Int. Conf. Acoust., Speech, Signal Process., New Orleans, LA, Mar. 2017, pp. 3599–3603.
+\bibitem{b8}  B. A. Jayawickrama, E. Dutkiewicz, I. Oppermann, G. Fang, and J. Ding,“Improved performance of spectrum cartography based on compressive sensing in cognitive radio networks,” in Proc. ICC, 2013, pp. 5657–5661.
+\bibitem{b9} Teganya, Y. and Romero, D., 2022. Deep Completion Autoencoders for Radio Map Estimation. IEEE Transactions on Wireless Communications, 21(3), pp.1710-1724.
+\bibitem{b10} Shrestha, S., Fu, X. and Hong, M., 2022. Deep Spectrum Cartography: Completing Radio Map Tensors Using Learned Neural Models. IEEE Transactions on Signal Processing, 70, pp.1170-1184.
+\bibitem{b11}  Karniadakis, G., Kevrekidis, I., Lu, L., Perdikaris, P., Wang, S. and Yang, L., 2021. Physics-informed machine learning. Nature Reviews Physics, 3(6), pp.422-440.
+
+\end{thebibliography}
+
+
+\end{document}
