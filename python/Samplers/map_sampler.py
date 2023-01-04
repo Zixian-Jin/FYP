@@ -30,7 +30,7 @@ class MapSampler:
         self.std_noise = std_noise
         self.set_unobserved_val_to_minus1 = False
 
-    def sample_map(self, t_map_to_sample, m_meta_map):
+    def sample_map(self, t_map_to_sample, m_meta_map, weights=None, epsilon=None):
 
         """
         Returns:
@@ -56,9 +56,39 @@ class MapSampler:
             v_meta_data = m_meta_map.flatten('F')
             unrelevant_ind = np.where(v_meta_data == 1)[0]
             indices_to_sampled_from = np.where(v_meta_data == 0)[0]
-            unobs_val_ind = np.random.choice(indices_to_sampled_from,
-                                             size=int((1 - sampling_factor) * len(indices_to_sampled_from)),
-                                             replace=False)
+
+
+            # Weighted Random Sampling by JZX
+            if epsilon == None:
+                unobs_val_ind = np.random.choice(indices_to_sampled_from,
+                                    size=int((1 - sampling_factor) * len(indices_to_sampled_from)),
+                                    replace=False)
+            else:
+                # update the weights without measurements inside buildings
+                weights = weights.flatten('F')
+                new_weights = np.array([weights[i] for i in indices_to_sampled_from])
+                new_weights = new_weights/np.sum(new_weights)
+
+                weighted_size = int(sampling_factor*len(indices_to_sampled_from)*epsilon)
+                unweighted_size = int(sampling_factor*len(indices_to_sampled_from)) - weighted_size
+                
+                obs_val_ind_weighted = np.random.choice(indices_to_sampled_from, weighted_size, replace=False, p=new_weights)
+
+                # to find the remaining elements unsampled
+                remaining_ind_to_sampled_from = []
+                for entry in indices_to_sampled_from:
+                    if not (entry in obs_val_ind_weighted):
+                        # this entry has not been sampled
+                        remaining_ind_to_sampled_from.append(entry)
+                remaining_ind_to_sampled_from = np.array(remaining_ind_to_sampled_from)
+                obs_val_ind_unweighted = np.random.choice(remaining_ind_to_sampled_from, unweighted_size, replace=False)
+
+                unobs_val_ind = []
+                for entry in indices_to_sampled_from:
+                    if not ((entry in obs_val_ind_weighted) or (entry in obs_val_ind_unweighted)):
+                        unobs_val_ind.append(entry)
+                unobs_val_ind = np.array(unobs_val_ind)
+
             all_unobs_ind_in = list(map(int, np.concatenate((unrelevant_ind, unobs_val_ind),
                                                             axis=0)))
             if self.set_unobserved_val_to_minus1:

@@ -35,11 +35,11 @@ class InsiteMapGenerator(MapGenerator):
         if self.l_file_num[0] == 50 and self.l_file_num[-1] == 51 and self.num_tx_per_channel == 2:
             # reconstructing a Wireless Insite map taken with a higher resolution (used in the conference paper)
             rx_power_tx1 = np.array(
-                pd.read_csv("Generators/remcom_maps/power_tx50.txt",
+                pd.read_csv("E:/FYP/deep-autoencoders-cartography/python/Generators/remcom_maps/power_tx50.txt",
                             delim_whitespace=True,
                             skipinitialspace=True))
             rx_power_tx2 = np.array(
-                pd.read_csv("Generators/remcom_maps/power_tx51.txt",
+                pd.read_csv("E:/FYP/deep-autoencoders-cartography/python/Generators/remcom_maps/power_tx51.txt",
                             delim_whitespace=True,
                             skipinitialspace=True))
             rx_power_tx1_dBW = dbm_to_db(np.reshape(rx_power_tx1,
@@ -70,7 +70,7 @@ class InsiteMapGenerator(MapGenerator):
                     file_name = 'power_tx%s.p2m' % files_ind[ind_tx]
                     large_map_tx = np.array(
                         pd.read_csv(
-                            'Generators/remcom_maps/'
+                            'E:/FYP/deep-autoencoders-cartography/python/Generators/remcom_maps/'
                             + file_name,
                             delim_whitespace=True,
                             skiprows=[0],

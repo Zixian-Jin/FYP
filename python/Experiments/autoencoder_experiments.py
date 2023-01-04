@@ -168,7 +168,7 @@ class ExperimentSet(gsim.AbstractExperimentSet):
         architecture_id = '8toy'
         filters = 27
         code_length = 4
-        train_autoencoder = False
+        train_autoencoder = True
         num_maps = 400000
         ve_split_frac = 1
         if not train_autoencoder:
@@ -192,18 +192,18 @@ class ExperimentSet(gsim.AbstractExperimentSet):
                 n_filters=filters)
             # Train
             training_sampler = MapSampler(v_sampling_factor=[0.05, 0.2], std_noise=1)
-            history, codes = estimator.train(generator=map_generator,
-                                               sampler=training_sampler,
-                                               learning_rate=5e-4,
-                                               n_super_batches=1,
-                                               n_maps=num_maps,
-                                               perc_train=0.9,
-                                               v_split_frac=ve_split_frac,
-                                               n_resamples_per_map=1,
-                                               n_epochs=100)
+            # history, codes = estimator.train(generator=map_generator,
+            #                                    sampler=training_sampler,
+            #                                    learning_rate=5e-4,
+            #                                    n_super_batches=1,
+            #                                    n_maps=num_maps,
+            #                                    perc_train=0.9,
+            #                                    v_split_frac=ve_split_frac,
+            #                                    n_resamples_per_map=1,
+            #                                    n_epochs=100)
 
-            # Plot training results: losses and visualize codes if enabled
-            ExperimentSet.plot_train_and_val_losses(history, exp_num)
+            # # Plot training results: losses and visualize codes if enabled
+            # ExperimentSet.plot_train_and_val_losses(history, exp_num)
 
         # Generate a test map and reconstruct
         map, meta_map, _ = map_generator.generate()
@@ -262,7 +262,7 @@ class ExperimentSet(gsim.AbstractExperimentSet):
         architecture_id = '8'
         filters = 64
         code_length = 64
-        train_autoencoder = False
+        train_autoencoder = True
         num_maps = 500000
         ve_split_frac = 1
         if not train_autoencoder:
@@ -286,25 +286,25 @@ class ExperimentSet(gsim.AbstractExperimentSet):
                 n_filters=filters)
             # Train
             training_sampler = MapSampler(v_sampling_factor=[0.05, 0.2], std_noise=1)
-            history, codes = estimator_1.train(generator=map_generator,
-                                               sampler=training_sampler,
-                                               learning_rate=1e-4,
-                                               n_super_batches=1,
-                                               n_maps=num_maps,
-                                               perc_train=0.9,
-                                               v_split_frac=ve_split_frac,
-                                               n_resamples_per_map=1,
-                                               n_epochs=100)
+            # history, codes = estimator_1.train(generator=map_generator,
+            #                                    sampler=training_sampler,
+            #                                    learning_rate=1e-4,
+            #                                    n_super_batches=1,
+            #                                    n_maps=num_maps,
+            #                                    perc_train=0.9,
+            #                                    v_split_frac=ve_split_frac,
+            #                                    n_resamples_per_map=1,
+            #                                    n_epochs=100)
 
-            # Plot training results: losses and visualize codes if enabled
-            ExperimentSet.plot_histograms_of_codes_and_visualize(
-                map_generator.x_length,
-                map_generator.y_length,
-                codes,
-                estimator_1.chosen_model,
-                exp_num,
-            )
-            ExperimentSet.plot_train_and_val_losses(history, exp_num)
+            # # Plot training results: losses and visualize codes if enabled
+            # ExperimentSet.plot_histograms_of_codes_and_visualize(
+            #     map_generator.x_length,
+            #     map_generator.y_length,
+            #     codes,
+            #     estimator_1.chosen_model,
+            #     exp_num,
+            # )
+            # ExperimentSet.plot_train_and_val_losses(history, exp_num)
 
         # 2. All estimators
         all_estimators = [
@@ -2445,7 +2445,7 @@ class ExperimentSet(gsim.AbstractExperimentSet):
         plt.show()  # (block=False)
         # plt.pause(10)
         fig1.savefig(
-            'output/autoencoder_experiments/savedResults/True_Sampled_and_Rec_maps%d.pdf'
+            'E:/FYP/deep-autoencoders-cartography/python/output/autoencoder_experiments/savedResults/True_Sampled_and_Rec_maps%d.pdf'
             % exp_num)
         return
 
